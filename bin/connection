@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'io/console'
+
+print 'Enter database host: '
+host = gets.chomp
+
+print 'Enter database username: '
+username = gets.chomp
+
+print 'Enter database password: '
+password = STDIN.noecho(&:gets).chomp
+puts
+
+print 'Enter database name: '
+database = gets.chomp
+
+credentials = {
+  host: host,
+  username: username,
+  password: password,
+  database: database
+}
+
+File.open('db-config.json', 'w') do |file|
+  file.write(JSON.pretty_generate(credentials))
+end
+
+gitignore_file = '.gitignore'
+unless File.exist?(gitignore_file)
+  File.new(gitignore_file, 'w')
+end
+
+unless File.read(gitignore_file).include?('db-config.json')
+  File.open(gitignore_file, 'a') do |file|
+    file.puts('db-config.json')
+  end
+end
+
+puts 'Database credentials saved in db-config.json and added to .gitignore.'

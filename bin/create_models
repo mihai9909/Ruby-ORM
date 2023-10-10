@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+require_relative '../lib/database_connection'
+Dir['./string_operations/*.rb'].each { |f| require f }
+
+Dir.mkdir('models') unless Dir.exist?('models')
+Dir.chdir('models')
+
+tables = DatabaseConnection.table_names
+
+tables.each do |name|
+  file_name = name.singular + '.rb'
+  file = File.new(file_name, 'w')
+  file.write("require './lib/RORM'\n\nclass #{name.singular.camelcase}\n\tinclude RORM\nend\n")
+  file.close
+  puts "Written to: #{file_name}"
+end
